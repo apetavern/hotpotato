@@ -1,0 +1,11 @@
+
+Layer0
+{
+	shader "complex.vfx"
+
+	TextureColor "models/potato/potato_color.png"
+	TextureAmbientOcclusion "materials/default/default_ao.tga"
+	TextureNormal "models/potato/potato_normal.png"
+	TextureRoughness "models/potato/potato_roughness.png"
+
+}
