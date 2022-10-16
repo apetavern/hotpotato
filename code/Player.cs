@@ -25,6 +25,8 @@ public partial class Player : AnimatedEntity
 	[Net]
 	public BaseCarriable ActiveChild { get; private set; }
 
+	public Particles SweatParticles { get; set; }
+
 	public Player()
 	{
 
@@ -50,6 +52,8 @@ public partial class Player : AnimatedEntity
 
 	public override void Simulate( Client cl )
 	{
+		var game = Sandbox.Game.Current as Game;
+
 		Controller?.Simulate( cl, this, Animator );
 		ActiveChild?.Simulate( cl );
 		ActiveChild?.SimulateAnimator( Animator );
@@ -62,12 +66,22 @@ public partial class Player : AnimatedEntity
 
 			if ( tr.Hit && tr.Entity is Player player && Host.IsServer )
 			{
-				var game = Sandbox.Game.Current as Game;
 				game.SetPotatoHolder( player );
 				ActiveChild.Delete();
 				HasPotato = false;
 			}
 		}
+
+		if ( HasPotato && game.ActiveState is Game.GameState.Playing )
+		{
+			SweatParticles ??= Particles.Create( "particles/sweat.vpcf" );
+		}
+		else
+		{
+			SweatParticles?.Destroy( true );
+		}
+
+		SweatParticles?.SetPosition( 0, EyePosition + Vector3.Up * 10f );
 	}
 
 	public override void FrameSimulate( Client cl )

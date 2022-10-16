@@ -79,7 +79,7 @@ public partial class Game
 
 		if ( state is GameState.Waiting )
 		{
-			StateTimer = 15f;
+			StateTimer = 5f;
 		}
 		else if ( state is GameState.Countdown )
 		{
@@ -88,7 +88,7 @@ public partial class Game
 		}
 		else if ( state is GameState.Playing )
 		{
-			StateTimer = 15f;
+			StateTimer = 5f;
 		}
 		else if ( state is GameState.End )
 		{
