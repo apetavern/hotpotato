@@ -23,7 +23,7 @@ public partial class Player : AnimatedEntity
 	public bool HasPotato { get; set; } = false;
 
 	[Net]
-	public BaseCarriable ActiveChild { get; private set; }
+	public PotatoCarriable ActiveChild { get; private set; }
 
 	public Player()
 	{
@@ -80,11 +80,16 @@ public partial class Player : AnimatedEntity
 		HasPotato = true;
 		ActiveChild = new PotatoCarriable();
 		ActiveChild.ActiveStart( this );
+
+		DoPotatoPickupEffects();
 	}
 
 	public override void OnKilled()
 	{
 		base.OnKilled();
+
+		ActiveChild?.DoExplodeEffects();
+		DoDeathEffects();
 
 		IsAlive = false;
 	}
@@ -94,5 +99,37 @@ public partial class Player : AnimatedEntity
 		SetupPhysicsFromAABB( PhysicsMotionType.Keyframed, new Vector3( -16, -16, 0 ), new Vector3( 16, 16, 72 ) );
 
 		EnableHitboxes = true;
+	}
+
+	[ConCmd.Client]
+	public void DoPotatoPickupEffects()
+	{
+		Sound.FromWorld( "potato_pickup", Position );
+	}
+
+	[ConCmd.Client]
+	public void DoDeathEffects()
+	{
+		Sound.FromWorld( "player_explosion", Position );
+		Particles.Create( "particles/impact.flesh-big.vpcf", Position );
+
+		string[] gibModels =
+		{
+			"models/sbox_props/watermelon/watermelon_gib06.vmdl",
+			"models/sbox_props/watermelon/watermelon_gib09.vmdl",
+			"models/sbox_props/watermelon/watermelon_gib07.vmdl"
+		};
+
+		int numOfGibs = 6;
+
+		for ( int i = 0; i < numOfGibs; i++ )
+		{
+			var gib = new ModelEntity( Rand.FromArray( gibModels ) );
+			gib.SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
+			gib.Position = Position;
+			gib.PhysicsGroup.ApplyImpulse( Vector3.Random * 100f + Vector3.Up * 100f, false );
+
+			gib.DeleteAsync( 8 );
+		}
 	}
 }

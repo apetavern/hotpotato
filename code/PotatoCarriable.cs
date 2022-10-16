@@ -26,4 +26,11 @@ public class PotatoCarriable : BaseCarriable
 		anim.SetAnimParameter( "holdtype_handedness", Handedness );
 		anim.SetAnimParameter( "holdtype_pose", Pose );
 	}
+
+	[ConCmd.Client]
+	public void DoExplodeEffects()
+	{
+		Particles.Create( "particles/explosion.vpcf", Position );
+		Sound.FromWorld( "explosion_1", Position );
+	}
 }
