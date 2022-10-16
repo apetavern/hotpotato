@@ -7,6 +7,7 @@ public class PotatoCarriable : BaseCarriable
 	const float Pose = 2.7f;
 
 	Sound TickSound { get; set; }
+	Particles PotatoSteam { get; set; }
 
 	public override void Spawn()
 	{
@@ -22,6 +23,7 @@ public class PotatoCarriable : BaseCarriable
 		SetParent( ent, true );
 
 		TickSound = Sound.FromWorld( "timer_tick", Position );
+		PotatoSteam = Particles.Create( "particles/potato_steam.vpcf", Position );
 	}
 
 	protected override void OnDestroy()
@@ -29,6 +31,7 @@ public class PotatoCarriable : BaseCarriable
 		base.OnDestroy();
 
 		TickSound.Stop();
+		PotatoSteam?.Destroy();
 	}
 
 	public override void Simulate( Client cl )
@@ -36,6 +39,7 @@ public class PotatoCarriable : BaseCarriable
 		base.Simulate( cl );
 
 		TickSound.SetPosition( Position );
+		PotatoSteam?.SetPosition( 0, Position );
 	}
 
 	public override void SimulateAnimator( PawnAnimator anim )
