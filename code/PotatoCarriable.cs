@@ -6,6 +6,8 @@ public class PotatoCarriable : BaseCarriable
 	const int Handedness = 0;
 	const float Pose = 2.7f;
 
+	Sound TickSound { get; set; }
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -18,6 +20,22 @@ public class PotatoCarriable : BaseCarriable
 		base.ActiveStart( ent );
 
 		SetParent( ent, true );
+
+		TickSound = Sound.FromWorld( "timer_tick", Position );
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		TickSound.Stop();
+	}
+
+	public override void Simulate( Client cl )
+	{
+		base.Simulate( cl );
+
+		TickSound.SetPosition( Position );
 	}
 
 	public override void SimulateAnimator( PawnAnimator anim )
